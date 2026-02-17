@@ -20,19 +20,33 @@ gap: 20px;
 .image-card {
 
 display: flex;
-flex-direction: column;
 align-items: center;
+gap: 30px;
+margin-bottom: 40px;
 
 }
 
 .image-card img {
 
-width: 70%;
-max-width: 700px;
+width: 400px;
 border-radius: 10px;
-box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 
 }
+.image-card {
+
+opacity: 0;
+transform: translateY(40px);
+transition: all 0.8s ease;
+
+}
+
+.image-card.show {
+
+opacity: 1;
+transform: translateY(0);
+
+}
+
 
 
 .project-card {
@@ -187,4 +201,5 @@ padding: 5px 10px;
 cursor: pointer;
 
 }
+
 
