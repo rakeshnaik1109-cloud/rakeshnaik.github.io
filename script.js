@@ -1,3 +1,4 @@
+// DARK MODE TOGGLE
 
 function toggleDarkMode() {
 
@@ -10,6 +11,9 @@ document.body.classList.contains("dark")
 
 }
 
+
+// LOAD SAVED DARK MODE
+
 if(localStorage.getItem("darkMode") === "true") {
 
 document.body.classList.add("dark");
@@ -17,7 +21,8 @@ document.body.classList.add("dark");
 }
 
 
-// Publication auto-format
+
+// PUBLICATION AUTO-FORMAT
 
 const publications = [
 
@@ -40,6 +45,8 @@ year: "2025"
 
 const pubList = document.getElementById("pub-list");
 
+if(pubList){
+
 pubList.innerHTML = "";
 
 publications.forEach(pub => {
@@ -58,3 +65,34 @@ ${pub.year}
 pubList.appendChild(div);
 
 });
+
+}
+
+
+
+// IMAGE SCROLL ANIMATION (FIXED)
+
+const cards = document.querySelectorAll(".image-card");
+
+window.addEventListener("scroll", () => {
+
+cards.forEach(card => {
+
+const rect = card.getBoundingClientRect();
+
+if(rect.top < window.innerHeight - 100){
+
+card.classList.add("show");
+
+}
+
+});
+
+});
+
+
+// OPTIONAL: Trigger animation on page load
+
+window.dispatchEvent(new Event("scroll"));
+
+
