@@ -1,15 +1,7 @@
 
 
 
-/* =====================================================
-   LOAD SAVED DARK MODE
-===================================================== */
 
-if(localStorage.getItem("darkMode") === "true") {
-
-document.body.classList.add("dark");
-
-}
 
 
 /* =====================================================
@@ -196,6 +188,7 @@ if(e.key === "Escape") modal.style.display = "none";
 ===================================================== */
 
 window.dispatchEvent(new Event("scroll"));
+
 
 
 
