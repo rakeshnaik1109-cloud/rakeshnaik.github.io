@@ -11,21 +11,41 @@
 const publications = [
 
 {
-authors: "R. Naik",
-title: "Machine learning-enabled SERS sensing platform",
-journal: "Work in Progress",
-year: "2026"
+  authors: "A Yadav, R Naik, E Gupta, PP Roy, SK Srivastava",
+  title: "Single-shot, receptor-free, rapid detection and classification of five respiratory viruses by machine learning integrated SERS sensing platform",
+  journal: "Biosensors and Bioelectronics 279, 117394",
+  year: "2025"
 },
 
 {
-authors: "R. Naik",
-title: "Interferometry-based optical sensing system",
-journal: "Work in Progress",
-year: "2025"
+  authors: "Arti Yadav, Rakesh Naik, Ekta Gupta, Partha Pratim Roy, SK Srivastava",
+  title: "Machine Learning-Enabled SERS (ML-SERS) Sensor for Rapid Classification of SARS-CoV-2 Variants in Clinical Nasopharyngeal Swab (CNS) Samples",
+  journal: "2025 Optica Sensing Congress (OSC), 1–2",
+  year: "2025"
+},
+
+{
+  authors: "A Yadav, R Naik, E Gupta, PP Roy, SK Srivastava",
+  title: "Addressing Complexity and Variability Issues of SERS Spectra of Clinical Nasopharyngeal Swab (CNS) Samples for Respiratory Viruses Detection using Machine Learning",
+  journal: "CLEO: Applications and Technology, AA109_3",
+  year: "2025"
+},
+
+{
+  authors: "Arti Yadav, Rakesh Naik, Ekta Gupta, Partha Pratim Roy, SK Srivastava",
+  title: "Machine Learning-integrated SERS Platform for Single-Shot, Receptor-Free Rapid Detection and Classification of Respiratory Viruses",
+  journal: "2025 Research Scholar Day, Department of Physics, 1",
+  year: "2025"
+},
+
+{
+  authors: "Rakesh Naik,SK Srivastava ",
+  title: "Machine Learning-Based Detection and Classification of Bacterial and Fungal Species and Their Mixture through Raman Spectra Analysis",
+  journal: "Workshop on Computational Techniques in Optics & Photonics",
+  year: "2024"
 }
 
 ];
-
 
 const pubList = document.getElementById("pub-list");
 
@@ -188,6 +208,7 @@ if(e.key === "Escape") modal.style.display = "none";
 ===================================================== */
 
 window.dispatchEvent(new Event("scroll"));
+
 
 
 
