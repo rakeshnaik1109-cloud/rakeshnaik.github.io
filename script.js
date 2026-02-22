@@ -1,17 +1,4 @@
-/* =====================================================
-   DARK MODE TOGGLE
-===================================================== */
 
-function toggleDarkMode() {
-
-document.body.classList.toggle("dark");
-
-localStorage.setItem(
-"darkMode",
-document.body.classList.contains("dark")
-);
-
-}
 
 
 /* =====================================================
@@ -209,6 +196,7 @@ if(e.key === "Escape") modal.style.display = "none";
 ===================================================== */
 
 window.dispatchEvent(new Event("scroll"));
+
 
 
 
