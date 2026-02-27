@@ -311,37 +311,39 @@ margin-top: 10px;
 
 /* ================= Gallery ================= */
 
-
 #gallery {
     margin-top: 60px;
 }
 
+/* Smaller cards + better spacing */
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
 }
 
+/* Cleaner card style */
 .gallery-item {
     background: #111;
-    border-radius: 10px;
+    border-radius: 8px;
     overflow: hidden;
     text-align: center;
 }
 
+/* FIXED: smaller image size */
 .gallery-item img {
     width: 100%;
-    height: 220px;
+    height: 160px;      /* reduced from 220px */
     object-fit: cover;
     display: block;
 }
 
+/* Caption style */
 .gallery-item p {
-    padding: 10px;
-    font-size: 14px;
-    color: #ddd;
+    padding: 8px;
+    font-size: 13px;
+    color: #ccc;
 }
-
 
 
 
@@ -423,6 +425,7 @@ right: 30px;
 opacity: 0.7;
 
 }
+
 
 
 
