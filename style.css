@@ -383,3 +383,22 @@ button:hover {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+.visitor-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    background: rgba(37, 99, 235, 0.05); /* Light blue tint */
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 15px;
+}
+
+#visit-count {
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Courier New', Courier, monospace; /* Digital look */
+    letter-spacing: 1px;
+}
