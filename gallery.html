@@ -1,40 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery</title>
+
+  <!-- Main CSS (optional if you have one) -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Gallery CSS -->
+  <link rel="stylesheet" href="gallery.css">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header class="navbar">
+  <div class="nav-container">
+    <h1 class="logo">Photonics Lab</h1>
+
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#research">Research</a></li>
+      <li><a href="index.html#visualizations">Visualizations</a></li>
+      <li><a href="index.html#publications">Publications</a></li>
+      <li><a href="index.html#blog">Blog</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="gallery.html" class="active">Gallery</a></li>
+    </ul>
+  </div>
+</header>
+
+
 <!-- ================= GALLERY ================= -->
-
 <section id="gallery">
-
   <div class="container">
 
-    <!-- Header with Back to Home -->
     <div class="section-header">
       <h2>Gallery</h2>
-      <a href="index.html" class="back-home" aria-label="Go back to home page">← Back to Home</a>
+      <a href="index.html" class="back-home">← Back to Home</a>
     </div>
 
     <div class="gallery-grid">
 
-      <!-- Image Card -->
       <div class="gallery-item">
         <img src="Photos/AR_group_bsd.jpg" alt="Convocation Ceremony with Dr. Riya and Dr. Arti" loading="lazy">
         <p>Convocation Ceremony — Dr. Riya and Dr. Arti</p>
       </div>
 
       <div class="gallery-item">
-        <img src="Photos/Ajay Ghatak.JPG" alt="World Quantum Day Celebration event" loading="lazy">
+        <img src="Photos/Ajay Ghatak.JPG" alt="World Quantum Day Celebration" loading="lazy">
         <p>World Quantum Day Celebration</p>
       </div>
 
       <div class="gallery-item">
-        <img src="Photos/FBG Demonstration.JPG" alt="Fiber Bragg Grating demonstration setup" loading="lazy">
-        <p>Demonstration of Fiber Bragg Grating (FBG) Applications</p>
+        <img src="Photos/FBG Demonstration.JPG" alt="Fiber Bragg Grating demonstration" loading="lazy">
+        <p>FBG Demonstration</p>
       </div>
 
       <div class="gallery-item">
-        <img src="Photos/GroupPoster.JPG" alt="Research group poster presentation" loading="lazy">
-        <p>Research Group Poster Presentation</p>
+        <img src="Photos/GroupPoster.JPG" alt="Research poster presentation" loading="lazy">
+        <p>Research Group Poster</p>
       </div>
 
     </div>
 
   </div>
-
 </section>
+
+
+<!-- ================= LIGHTBOX ================= -->
+<div id="lightbox">
+  <span id="close">&times;</span>
+  <img id="lightbox-img">
+</div>
+
+
+<!-- ================= SCRIPT ================= -->
+<script>
+const images = document.querySelectorAll(".gallery-item img");
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightbox-img");
+const closeBtn = document.getElementById("close");
+
+images.forEach(img => {
+  img.addEventListener("click", () => {
+    lightbox.style.display = "flex";
+    lightboxImg.src = img.src;
+  });
+});
+
+closeBtn.addEventListener("click", () => {
+  lightbox.style.display = "none";
+});
+
+lightbox.addEventListener("click", (e) => {
+  if (e.target !== lightboxImg) {
+    lightbox.style.display = "none";
+  }
+});
+</script>
+
+</body>
+</html>
