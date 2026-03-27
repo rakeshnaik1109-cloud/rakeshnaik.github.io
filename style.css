@@ -115,7 +115,12 @@ h2{
   flex-direction:column;
   gap:40px;
 }
-
+.card img{
+  width:100%;
+  height:160px;        /* FORCE thumbnail size */
+  object-fit:cover;    /* crop nicely */
+  max-width:none;      /* override the 400px limit */
+}
 .image-card{
   display:flex;
   align-items:center;
@@ -183,31 +188,34 @@ h2{
 
 .gallery-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
-  gap:20px;
+  grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+  gap:15px;
 }
 
+/* Card */
 .card{
   background:#fff;
-  border-radius:10px;
+  border-radius:8px;
   overflow:hidden;
-  border:1px solid #eee;
-  box-shadow:0 3px 10px rgba(0,0,0,0.05);
-  transition:0.25s;
+  border:1px solid #ccc;
 }
 
-.card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 8px 18px rgba(0,0,0,0.08);
-}
-
-/* ===== FIXED IMAGE SIZE ===== */
+/* Image FIX */
 .card img{
   width:100%;
-  height:180px;        /* uniform size */
-  object-fit:cover;    /* no stretching */
+  height:160px;        /* FIXED SIZE */
+  object-fit:cover;    /* prevents stretching */
   display:block;
-  cursor:pointer;
+}
+
+/* Caption */
+.card p{
+  padding:8px;
+  font-size:0.85rem;
+  text-align:center;
+}
+.container{
+  width:100%;
 }
 
 /* ===== CAPTION ===== */
@@ -301,7 +309,13 @@ button:hover{
   }
 
   /* smaller gallery images */
-  .card img{
-    height:150px;
-  }
+   .card img{
+  width:100%;
+  height:160px;        /* FORCE thumbnail size */
+  object-fit:cover;    /* crop nicely */
+  max-width:none;      /* override the 400px limit */
 }
+  
+}
+
+
