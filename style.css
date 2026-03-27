@@ -101,7 +101,6 @@ section{
   border-top:1px solid var(--border);
 }
 
-
 /* =========================
    MODAL (OPTIONAL)
 ========================= */
@@ -118,22 +117,6 @@ section{
 .modal img{
   max-width:85%;
   max-height:85%;
-}
-
-nav{
-  margin-top:10px;
-  margin-bottom:20px;
-}
-
-nav a{
-  margin-right:20px;
-  text-decoration:none;
-  color:#0066cc;
-  font-weight:500;
-}
-
-nav a:hover{
-  text-decoration:underline;
 }
 
 /* =========================
@@ -156,4 +139,3 @@ footer{
     height:140px;
   }
 }
-
