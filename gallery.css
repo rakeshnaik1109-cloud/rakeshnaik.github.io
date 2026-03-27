@@ -1,27 +1,29 @@
+/* ================= GALLERY ONLY ================= */
+
 .gallery-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
   gap:15px;
 }
 
-/* Card */
-.card{
+/* ONLY gallery cards */
+.gallery-grid .card{
   background:#fff;
   border-radius:8px;
   overflow:hidden;
   border:1px solid #ccc;
 }
 
-/* Image FIX */
-.card img{
+/* ONLY gallery images */
+.gallery-grid .card img{
   width:100%;
-  height:160px;        /* FIXED SIZE */
-  object-fit:cover;    /* prevents stretching */
+  height:160px;
+  object-fit:cover;
   display:block;
 }
 
-/* Caption */
-.card p{
+/* ONLY gallery captions */
+.gallery-grid .card p{
   padding:8px;
   font-size:0.85rem;
   text-align:center;
