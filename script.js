@@ -83,6 +83,31 @@ const setupScrollAnimations = () => {
   });
 };
 
+
+async function updateVisitorCount() {
+    const countElement = document.getElementById('visit-count');
+    if (!countElement) return;
+
+    try {
+        // Replace 'rakeshnaik.com' with your actual website name to make it unique
+        const response = await fetch('https://api.countapi.xyz/hit/rakeshnaik.com/visits');
+        const data = await response.json();
+        
+        // Update the number with a nice padding (e.g., 0042)
+        countElement.innerText = data.value.toString().padStart(4, '0');
+    } catch (error) {
+        console.log("Visitor counter unavailable");
+        countElement.innerText = "----";
+    }
+}
+
+// Call this inside your DOMContentLoaded listener
+document.addEventListener("DOMContentLoaded", () => {
+    updateVisitorCount();
+    // ... your other functions (renderPublications, etc.)
+});
+
+
 /* =====================================================
    IMAGE GALLERY CONTROLLER
 ===================================================== */
