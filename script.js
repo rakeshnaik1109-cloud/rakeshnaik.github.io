@@ -39,8 +39,8 @@ const renderPublications = () => {
   if (!pubList) return;
 
   pubList.innerHTML = publications.map(pub => {
-    // TIP: This bolding logic highlights your name or the first author automatically
-    const highlightedAuthors = pub.authors.replace(/(A Yadav|Arti Yadav)/g, "<strong>$1</strong>");
+    // UPDATED: Now looks for R Naik or Rakesh Naik to bold them
+    const highlightedAuthors = pub.authors.replace(/(R Naik|Rakesh Naik)/g, "<strong>$1</strong>");
     
     return `
       <div class="blog-post">
