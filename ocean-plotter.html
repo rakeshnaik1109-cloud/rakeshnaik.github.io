@@ -6,7 +6,6 @@
 <title>Ocean Optics Raman Plotter</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
-
 <style>
 :root {
   --bg: #ffffff;
@@ -28,30 +27,75 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  padding: 28px;
+  padding: 0;
 }
 
-<header class="navbar">
-    <div class="nav-container">
-        <div class="logo">Rakesh<span>Naik</span></div>
-        
-        <nav class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="index.html#research">Research</a>
-            <a href="index.html#publications">Publications</a>
-            <a href="gallery.html" class="active">Gallery</a>
-            <a href="blog.html">Blog</a>
-            
-        </nav>
-    </div>
-</header>
+/* ── Fixed Navigation Bar Styling ── */
+.navbar {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 28px;
+  width: 100%;
+  margin-bottom: 28px;
+}
+
+.nav-container {
+  max-width: 1500px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+}
+
+.logo span {
+  font-weight: 300;
+  color: var(--muted);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  list-style: none;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+  position: relative;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  color: var(--accent);
+}
+
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+}
 
 .app-shell {
   max-width: 1500px;
   margin: auto;
+  padding: 0 28px 28px 28px;
 }
 
-header {
+header.app-header {
   display: flex;
   justify-content: center;
   align-items: baseline;
@@ -60,7 +104,7 @@ header {
   padding-bottom: 20px;
 }
 
-header h1 {
+header.app-header h1 {
   font-family: Arial, sans-serif;
   font-size: 36px;
   font-weight: bold;
@@ -68,7 +112,7 @@ header h1 {
   color: var(--text);
 }
 
-header span {
+header.app-header span {
   font-size: 14px;
   color: var(--muted);
   letter-spacing: 0;
@@ -172,6 +216,31 @@ header span {
   gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 18px;
+  align-items: center;
+}
+
+.download-group {
+  display: flex;
+  background: #0f172a;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.download-group .btn {
+  border-radius: 0;
+}
+
+.download-group select {
+  background: #1e293b;
+  color: #ffffff;
+  border: none;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 0 12px;
+  outline: none;
+  cursor: pointer;
+  border-left: 1px solid #334155;
 }
 
 .btn {
@@ -240,13 +309,11 @@ header span {
   margin-bottom: 10px;
 }
 
-/* Plot wrapper — must have explicit size for Plotly */
 #plot-wrapper {
   background: white;
   border-radius: var(--radius);
   overflow: hidden;
   border: 1px solid var(--border);
-  /* width/height are set dynamically by JS */
   display: block;
 }
 
@@ -254,21 +321,32 @@ header span {
   display: block !important;
 }
 
-/* Override Plotly modebar */
 .modebar { background: transparent !important; }
 .modebar-btn path { fill: #888 !important; }
 </style>
 </head>
 <body>
 
+<header class="navbar">
+    <div class="nav-container">
+        <div class="logo">Rakesh<span>Naik</span></div>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="index.html#research">Research</a>
+            <a href="index.html#publications">Publications</a>
+            <a href="gallery.html" class="active">Gallery</a>
+            <a href="blog.html">Blog</a>
+        </nav>
+    </div>
+</header>
+
 <div class="app-shell">
 
-  <header>
+  <header class="app-header">
     <h1>Raman Plotter</h1>
     <span>Ocean Optics · Spectral Analysis</span>
   </header>
 
-  <!-- File & Label -->
   <div class="panel">
     <div class="panel-title">Data Input</div>
     <div class="grid">
@@ -284,7 +362,6 @@ header span {
     <div id="status">No files loaded</div>
   </div>
 
-  <!-- Plot Controls -->
   <div class="panel">
     <div class="panel-title">Plot Settings</div>
     <div class="grid">
@@ -334,6 +411,10 @@ header span {
         <label>Legend Size</label>
         <input type="number" id="legendSize" value="12" min="6">
       </div>
+      <div class="field">
+        <label>Average Line Color</label>
+        <input type="color" id="avgColor" value="#0f172a">
+      </div>
     </div>
 
     <div class="toggles">
@@ -345,24 +426,32 @@ header span {
         <input type="checkbox" id="boldStyle" checked>
         Bold Font
       </label>
+      <label class="toggle-item">
+        <input type="checkbox" id="averageOnly">
+        Show Average Spectrum Only
+      </label>
     </div>
   </div>
 
-  <!-- Per-Spectrum Controls (populated on file load) -->
   <div id="spectraPanel" style="display:none; margin-bottom: 18px;">
     <div id="spectrumControls"></div>
   </div>
 
-  <!-- Actions -->
   <div class="actions">
     <button class="btn btn-primary" onclick="plotSpectrum()">▶ Plot</button>
-    <button class="btn btn-secondary" onclick="downloadPlot()">↓ Download PNG</button>
+    <div class="download-group">
+      <button class="btn btn-secondary" onclick="downloadPlot()">↓ Download Image</button>
+      <select id="downloadFormat">
+        <option value="png">.png</option>
+        <option value="jpeg">.jpg</option>
+        <option value="tiff">.tiff</option>
+      </select>
+    </div>
   </div>
 
-  <!-- Plot output -->
   <div id="plot-wrapper"></div>
 
-</div><!-- end app-shell -->
+</div>
 
 <script>
 let spectra = [];
@@ -449,6 +538,22 @@ function normalizeData(y, type) {
   return y;
 }
 
+/* ── Linear Interpolation Helper for Averaging ─────────────── */
+function interpolate(xArr, yArr, targetX) {
+  if (targetX <= xArr[0]) return yArr[0];
+  if (targetX >= xArr[xArr.length - 1]) return yArr[yArr.length - 1];
+  
+  let low = 0, high = xArr.length - 1;
+  while (high - low > 1) {
+    const mid = Math.floor((low + high) / 2);
+    if (xArr[mid] <= targetX) low = mid;
+    else high = mid;
+  }
+  const x0 = xArr[low], x1 = xArr[high];
+  const y0 = yArr[low], y1 = yArr[high];
+  return y0 + (targetX - x0) * (y1 - y0) / (x1 - x0);
+}
+
 /* ── Peak detection ────────────────────────────────────────── */
 function detectPeaks(xx, yy) {
   const threshold = 0.2 * Math.max(...yy);
@@ -470,60 +575,69 @@ function setStatus(msg, cls = "") {
 function plotSpectrum() {
   if (!spectra.length) { alert("Please upload at least one spectrum file first."); return; }
 
-  const bold      = document.getElementById("boldStyle").checked;
-  const peaks     = document.getElementById("showPeaks").checked;
-  const xmin      = parseFloat(document.getElementById("xmin").value);
-  const xmax      = parseFloat(document.getElementById("xmax").value);
-  const lw        = parseFloat(document.getElementById("linewidth").value);
-  const norm      = document.getElementById("normType").value;
-  const titleText = document.getElementById("title").value;
-  const titleSize = parseInt(document.getElementById("titleSize").value);
-  const labelSize = parseInt(document.getElementById("labelSize").value);
-  const tickSize  = parseInt(document.getElementById("tickSize").value);
-  const legSize   = parseInt(document.getElementById("legendSize").value);
+  const bold       = document.getElementById("boldStyle").checked;
+  const peaks      = document.getElementById("showPeaks").checked;
+  const avgOnly    = document.getElementById("averageOnly").checked;
+  const xmin       = parseFloat(document.getElementById("xmin").value);
+  const xmax       = parseFloat(document.getElementById("xmax").value);
+  const lw         = parseFloat(document.getElementById("linewidth").value);
+  const norm       = document.getElementById("normType").value;
+  const titleText  = document.getElementById("title").value;
+  const titleSize  = parseInt(document.getElementById("titleSize").value);
+  const labelSize  = parseInt(document.getElementById("labelSize").value);
+  const tickSize   = parseInt(document.getElementById("tickSize").value);
+  const legSize    = parseInt(document.getElementById("legendSize").value);
+  const chosenAvgColor = document.getElementById("avgColor").value;
 
-  // FIX: read width/height as direct pixel values (no scale factor)
   const W = Math.max(300, parseInt(document.getElementById("figWidth").value)  || 1000);
   const H = Math.max(200, parseInt(document.getElementById("figHeight").value) || 600);
 
   const font = bold ? "Arial Black, Arial" : "Georgia, serif";
 
-  // FIX: size the wrapper div BEFORE Plotly touches it, then pass same values to layout
   const wrapper = document.getElementById("plot-wrapper");
   wrapper.style.width  = W + "px";
   wrapper.style.height = H + "px";
 
-  // Purge any existing plot cleanly
   Plotly.purge(wrapper);
-
   const traces = [];
 
-  spectra.forEach((spec, idx) => {
-    const mask = spec.x.map((v, i) => v >= xmin && v <= xmax ? i : -1).filter(i => i >= 0);
-    const xx = mask.map(i => spec.x[i]);
-    let   yy = mask.map(i => spec.y[i]);
+  if (avgOnly) {
+    const baseSpec = spectra[0];
+    const baseMask = baseSpec.x.map((v, i) => v >= xmin && v <= xmax ? i : -1).filter(i => i >= 0);
+    if (!baseMask.length) { alert("No spectral values found within your X range limit."); return; }
+    
+    const sharedX = baseMask.map(i => baseSpec.x[i]);
+    const sumY = new Array(sharedX.length).fill(0);
 
-    yy = normalizeData(yy, norm);
+    spectra.forEach((spec) => {
+      const mask = spec.x.map((v, i) => v >= xmin && v <= xmax ? i : -1).filter(i => i >= 0);
+      const subX = mask.map(i => spec.x[i]);
+      let subY = mask.map(i => spec.y[i]);
+      subY = normalizeData(subY, norm);
 
-    const color = document.getElementById("color" + idx)?.value ?? "#5ee7c8";
-    const label = document.getElementById("label" + idx)?.value ?? `Spectrum ${idx + 1}`;
-
-    traces.push({
-      x: xx, y: yy,
-      mode: "lines",
-      line: { width: lw, color },
-      name: label
+      sharedX.forEach((targetX, idx) => {
+        sumY[idx] += interpolate(subX, subY, targetX);
+      });
     });
 
-    if (peaks && yy.length > 2) {
-      const pi = detectPeaks(xx, yy);
+    const avgY = sumY.map(val => val / spectra.length);
+
+    traces.push({
+      x: sharedX, y: avgY,
+      mode: "lines",
+      line: { width: lw, color: chosenAvgColor }, // Uses chosen color picker setting
+      name: "Calculated Average"
+    });
+
+    if (peaks && avgY.length > 2) {
+      const pi = detectPeaks(sharedX, avgY);
       if (pi.length) {
         traces.push({
-          x: pi.map(i => xx[i]),
-          y: pi.map(i => yy[i]),
+          x: pi.map(i => sharedX[i]),
+          y: pi.map(i => avgY[i]),
           mode: "markers+text",
-          marker: { color, size: 5, symbol: "circle" },
-          text: pi.map(i => String(Math.round(xx[i]))),
+          marker: { color: chosenAvgColor, size: 5, symbol: "circle" },
+          text: pi.map(i => String(Math.round(sharedX[i]))),
           textposition: "top center",
           textfont: { family: font, size: 9, color: "#333" },
           showlegend: false,
@@ -531,9 +645,43 @@ function plotSpectrum() {
         });
       }
     }
-  });
+  } else {
+    spectra.forEach((spec, idx) => {
+      const mask = spec.x.map((v, i) => v >= xmin && v <= xmax ? i : -1).filter(i => i >= 0);
+      const xx = mask.map(i => spec.x[i]);
+      let   yy = mask.map(i => spec.y[i]);
 
-  // FIX: layout width/height must match wrapper — autosize must be FALSE
+      yy = normalizeData(yy, norm);
+
+      const color = document.getElementById("color" + idx)?.value ?? "#5ee7c8";
+      const label = document.getElementById("label" + idx)?.value ?? `Spectrum ${idx + 1}`;
+
+      traces.push({
+        x: xx, y: yy,
+        mode: "lines",
+        line: { width: lw, color },
+        name: label
+      });
+
+      if (peaks && yy.length > 2) {
+        const pi = detectPeaks(xx, yy);
+        if (pi.length) {
+          traces.push({
+            x: pi.map(i => xx[i]),
+            y: pi.map(i => yy[i]),
+            mode: "markers+text",
+            marker: { color, size: 5, symbol: "circle" },
+            text: pi.map(i => String(Math.round(xx[i]))),
+            textposition: "top center",
+            textfont: { family: font, size: 9, color: "#333" },
+            showlegend: false,
+            hoverinfo: "skip"
+          });
+        }
+      }
+    });
+  }
+
   const layout = {
     width:  W,
     height: H,
@@ -564,8 +712,6 @@ function plotSpectrum() {
     }
   };
 
-  // FIX: responsive MUST be false — otherwise Plotly resizes to the container
-  // and ignores layout.width / layout.height entirely
   Plotly.newPlot(wrapper, traces, layout, {
     responsive: false,
     displaylogo: false,
@@ -573,12 +719,14 @@ function plotSpectrum() {
   });
 }
 
-/* ── Download ──────────────────────────────────────────────── */
+/* ── Dynamic Export Download Engine ────────────────────────── */
 function downloadPlot() {
+  const format = document.getElementById("downloadFormat").value;
   const W = parseInt(document.getElementById("figWidth").value)  || 1000;
   const H = parseInt(document.getElementById("figHeight").value) || 600;
+  
   Plotly.downloadImage("plot-wrapper", {
-    format: "png",
+    format: format === "tiff" ? "png" : format, 
     filename: "RamanPlot",
     width: W,
     height: H,
