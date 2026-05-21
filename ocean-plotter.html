@@ -2,674 +2,574 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ocean Optics Raman Plotter</title>
-
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
+
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+:root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface2: #f8fafc;
+  --border: #cccccc;
+  --accent: #0f172a;
+  --accent2: #0f172a;
+  --text: #000000;
+  --muted: #444444;
+  --danger: #dc2626;
+  --radius: 10px;
 }
 
-body{
-font-family:Arial,sans-serif;
-background:linear-gradient(135deg,#edf2f7,#dbeafe);
-padding:30px;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 28px;
 }
 
-.container{
-max-width:1600px;
-margin:auto;
-background:white;
-padding:30px;
-border-radius:25px;
-box-shadow:0 10px 30px rgba(0,0,0,.15);
+.app-shell {
+  max-width: 1500px;
+  margin: auto;
 }
 
-h1{
-text-align:center;
-font-size:36px;
-font-weight:bold;
-margin-bottom:30px;
+header {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
 }
 
-.controls{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:18px;
+header h1 {
+  font-family: Arial, sans-serif;
+  font-size: 36px;
+  font-weight: bold;
+  letter-spacing: 0;
+  color: var(--text);
 }
 
-.control-box{
-display:flex;
-flex-direction:column;
+header span {
+  font-size: 14px;
+  color: var(--muted);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
-label{
-font-weight:bold;
-margin-bottom:8px;
+.panel {
+  background: var(--surface);
+  border: none;
+  border-radius: 0;
+  padding: 0 0 22px 0;
+  margin-bottom: 18px;
 }
 
-input,select{
-padding:10px;
-border:1px solid #ccc;
-border-radius:10px;
+.panel-title {
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 16px;
 }
 
-button{
-padding:14px 30px;
-background:#0f172a;
-color:white;
-border:none;
-border-radius:10px;
-font-weight:bold;
-cursor:pointer;
-margin-top:20px;
-margin-right:10px;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
 }
 
-button:hover{
-opacity:.9;
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-#plot{
-margin-top:25px;
-height:750px;
+.field label {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--text);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
-.card{
-padding:15px;
-border:1px solid #ddd;
-border-radius:10px;
-margin-top:15px;
-background:#f8fafc;
+.field input,
+.field select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  padding: 9px 11px;
+  transition: border-color 0.15s;
+  outline: none;
+  width: 100%;
 }
 
-#spectrumControls{
-display:grid;
-grid-template-columns:
-repeat(auto-fit,minmax(320px,1fr));
-gap:15px;
-margin-top:20px;
+.field input:focus,
+.field select:focus {
+  border-color: var(--accent);
 }
 
+.field input[type="file"] {
+  padding: 7px 11px;
+  cursor: pointer;
+}
+
+.field input[type="color"] {
+  padding: 4px 6px;
+  height: 36px;
+  cursor: pointer;
+}
+
+.toggles {
+  display: flex;
+  gap: 22px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--text);
+  user-select: none;
+}
+
+.toggle-item input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.btn {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: 14px 30px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.btn:active { transform: scale(0.97); }
+.btn:hover { opacity: 0.85; }
+
+.btn-primary {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background: #0f172a;
+  color: #ffffff;
+  border: none;
+}
+
+#status {
+  font-size: 14px;
+  color: var(--text);
+  margin-top: 10px;
+  min-height: 18px;
+}
+
+#status.ok { color: var(--text); }
+#status.err { color: var(--danger); }
+
+#spectrumControls {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.spec-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 15px;
+}
+
+.spec-card b {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--text);
+  display: block;
+  margin-bottom: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spec-card .field {
+  margin-bottom: 10px;
+}
+
+/* Plot wrapper — must have explicit size for Plotly */
+#plot-wrapper {
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  /* width/height are set dynamically by JS */
+  display: block;
+}
+
+#plot-wrapper > div {
+  display: block !important;
+}
+
+/* Override Plotly modebar */
+.modebar { background: transparent !important; }
+.modebar-btn path { fill: #888 !important; }
 </style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="app-shell">
 
-<h1>Ocean Optics Raman Plotter</h1>
+  <header>
+    <h1>Raman Plotter</h1>
+    <span>Ocean Optics · Spectral Analysis</span>
+  </header>
 
-<div class="controls">
+  <!-- File & Label -->
+  <div class="panel">
+    <div class="panel-title">Data Input</div>
+    <div class="grid">
+      <div class="field" style="grid-column: span 2;">
+        <label>Upload .txt Files</label>
+        <input type="file" id="fileInput" multiple accept=".txt">
+      </div>
+      <div class="field" style="grid-column: span 2;">
+        <label>Plot Title</label>
+        <input type="text" id="title" value="Average Spectrum">
+      </div>
+    </div>
+    <div id="status">No files loaded</div>
+  </div>
 
-<div class="control-box">
-<label>Upload Files</label>
-<input type="file" id="fileInput" multiple accept=".txt">
-</div>
+  <!-- Plot Controls -->
+  <div class="panel">
+    <div class="panel-title">Plot Settings</div>
+    <div class="grid">
+      <div class="field">
+        <label>X Min (cm⁻¹)</label>
+        <input type="number" id="xmin" value="400">
+      </div>
+      <div class="field">
+        <label>X Max (cm⁻¹)</label>
+        <input type="number" id="xmax" value="1800">
+      </div>
+      <div class="field">
+        <label>Normalization</label>
+        <select id="normType">
+          <option value="none">None</option>
+          <option value="max">Max</option>
+          <option value="minmax">Min-Max</option>
+          <option value="area">Area</option>
+          <option value="vector">Vector</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Line Width</label>
+        <input type="number" id="linewidth" value="2" min="0.5" step="0.5">
+      </div>
+      <div class="field">
+        <label>Figure Width (px)</label>
+        <input type="number" id="figWidth" value="1000" min="300" step="50">
+      </div>
+      <div class="field">
+        <label>Figure Height (px)</label>
+        <input type="number" id="figHeight" value="600" min="200" step="50">
+      </div>
+      <div class="field">
+        <label>Title Size</label>
+        <input type="number" id="titleSize" value="22" min="8">
+      </div>
+      <div class="field">
+        <label>Axis Label Size</label>
+        <input type="number" id="labelSize" value="18" min="8">
+      </div>
+      <div class="field">
+        <label>Tick Size</label>
+        <input type="number" id="tickSize" value="13" min="6">
+      </div>
+      <div class="field">
+        <label>Legend Size</label>
+        <input type="number" id="legendSize" value="12" min="6">
+      </div>
+    </div>
 
-<div class="control-box">
-<label>Plot Title</label>
-<input type="text" id="title" value="Average Spectrum">
-</div>
+    <div class="toggles">
+      <label class="toggle-item">
+        <input type="checkbox" id="showPeaks" checked>
+        Detect Peaks
+      </label>
+      <label class="toggle-item">
+        <input type="checkbox" id="boldStyle" checked>
+        Bold Font
+      </label>
+    </div>
+  </div>
 
-<div class="control-box">
-<label>X Min</label>
-<input type="number" id="xmin" value="400">
-</div>
+  <!-- Per-Spectrum Controls (populated on file load) -->
+  <div id="spectraPanel" style="display:none; margin-bottom: 18px;">
+    <div id="spectrumControls"></div>
+  </div>
 
-<div class="control-box">
-<label>X Max</label>
-<input type="number" id="xmax" value="1800">
-</div>
+  <!-- Actions -->
+  <div class="actions">
+    <button class="btn btn-primary" onclick="plotSpectrum()">▶ Plot</button>
+    <button class="btn btn-secondary" onclick="downloadPlot()">↓ Download PNG</button>
+  </div>
 
-<div class="control-box">
-<label>Line Width</label>
-<input type="number" id="linewidth" value="2">
-</div>
+  <!-- Plot output -->
+  <div id="plot-wrapper"></div>
 
-<div class="control-box">
-<label>Figure Width</label>
-<input type="number" id="figWidth" value="10">
-</div>
-
-<div class="control-box">
-<label>Figure Height</label>
-<input type="number" id="figHeight" value="6">
-</div>
-
-<div class="control-box">
-<label>Normalization</label>
-
-<select id="normType">
-<option value="none">None</option>
-<option value="max">Max</option>
-<option value="minmax">Min-Max</option>
-<option value="area">Area</option>
-<option value="vector">Vector</option>
-</select>
-</div>
-
-<div class="control-box">
-<label>Axis Label Size</label>
-<input type="number" id="labelSize" value="18">
-</div>
-
-<div class="control-box">
-<label>Title Size</label>
-<input type="number" id="titleSize" value="22">
-</div>
-
-<div class="control-box">
-<label>Legend Size</label>
-<input type="number" id="legendSize" value="12">
-</div>
-
-<div class="control-box">
-<label>Tick Size</label>
-<input type="number" id="tickSize" value="13">
-</div>
-
-</div>
-
-<br>
-
-<input type="checkbox" id="showPeaks" checked>
-Detect Peaks
-
-&nbsp;&nbsp;&nbsp;
-
-<input type="checkbox" id="boldStyle" checked>
-Bold Everything
-
-
-<div id="status">
-No file loaded
-</div>
-
-<div id="spectrumControls"></div>
-
-<button onclick="plotSpectrum()">Plot</button>
-<button onclick="downloadPlot()">Download PNG</button>
-
-<div id="plot"></div>
-
-</div>
+</div><!-- end app-shell -->
 
 <script>
+let spectra = [];
 
-let spectra=[]
+document.getElementById("fileInput").addEventListener("change", readFiles);
 
-document
-.getElementById("fileInput")
-.addEventListener(
-"change",
-readFiles
-)
+/* ── File reading ──────────────────────────────────────────── */
+function readFiles(e) {
+  spectra = [];
+  document.getElementById("spectrumControls").innerHTML = "";
+  document.getElementById("spectraPanel").style.display = "none";
 
-function readFiles(e){
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
 
-spectra=[]
-
-document
-.getElementById(
-"spectrumControls"
-).innerHTML=""
-
-Array
-.from(e.target.files)
-.forEach((file,index)=>{
-
-let reader=
-new FileReader()
-
-reader.onload=
-evt=>parseOceanData(
-evt.target.result,
-file.name,
-index
-)
-
-reader.readAsText(file)
-
-})
-
+  let loaded = 0;
+  files.forEach((file, index) => {
+    const reader = new FileReader();
+    reader.onload = evt => {
+      parseOceanData(evt.target.result, file.name, index);
+      loaded++;
+      setStatus(`${loaded} / ${files.length} spectra loaded`, loaded === files.length ? "ok" : "");
+      if (loaded === files.length) {
+        document.getElementById("spectraPanel").style.display = "block";
+      }
+    };
+    reader.readAsText(file);
+  });
 }
 
-function parseOceanData(
-text,
-filename,
-index
-){
+function parseOceanData(text, filename, index) {
+  const x = [], y = [];
+  let start = false;
 
-let x=[]
-let y=[]
+  for (const line of text.split("\n")) {
+    if (line.includes(">>>>>Begin Spectral Data<<<<<")) { start = true; continue; }
+    if (start) {
+      const vals = line.trim().split(/[\s,\t]+/);
+      if (vals.length >= 2) {
+        const xx = parseFloat(vals[0]);
+        const yy = parseFloat(vals[1]);
+        if (!isNaN(xx) && !isNaN(yy)) { x.push(xx); y.push(yy); }
+      }
+    }
+  }
 
-let start=false
+  const palette = ["#5ee7c8","#a78bfa","#f87171","#fbbf24","#60a5fa","#34d399","#fb923c","#e879f9"];
+  const color = palette[index % palette.length];
 
-let lines=text.split("\n")
+  spectra[index] = { x, y };
 
-for(let line of lines){
-
-if(
-line.includes(
-">>>>>Begin Spectral Data<<<<<"
-)
-){
-
-start=true
-continue
-
+  document.getElementById("spectrumControls").innerHTML += `
+    <div class="spec-card">
+      <b title="${filename}">${filename}</b>
+      <div class="field">
+        <label>Label</label>
+        <input id="label${index}" value="${filename.replace(/\.txt$/i, "")}">
+      </div>
+      <div class="field">
+        <label>Color</label>
+        <input type="color" id="color${index}" value="${color}">
+      </div>
+    </div>`;
 }
 
-if(start){
-
-let vals=
-line.trim()
-.split(/\s+/)
-
-if(vals.length>=2){
-
-let xx=
-parseFloat(vals[0])
-
-let yy=
-parseFloat(vals[1])
-
-if(
-!isNaN(xx)
-&&
-!isNaN(yy)
-){
-
-x.push(xx)
-y.push(yy)
-
+/* ── Normalization ─────────────────────────────────────────── */
+function normalizeData(y, type) {
+  if (type === "none") return y;
+  if (type === "max") {
+    const m = Math.max(...y); return m ? y.map(v => v / m) : y;
+  }
+  if (type === "minmax") {
+    const mn = Math.min(...y), mx = Math.max(...y);
+    return (mx - mn) ? y.map(v => (v - mn) / (mx - mn)) : y;
+  }
+  if (type === "area") {
+    const s = y.reduce((a, b) => a + Math.abs(b), 0);
+    return s ? y.map(v => v / s) : y;
+  }
+  if (type === "vector") {
+    const norm = Math.sqrt(y.reduce((a, b) => a + b * b, 0));
+    return norm ? y.map(v => v / norm) : y;
+  }
+  return y;
 }
 
+/* ── Peak detection ────────────────────────────────────────── */
+function detectPeaks(xx, yy) {
+  const threshold = 0.2 * Math.max(...yy);
+  const peaks = [];
+  for (let i = 1; i < yy.length - 1; i++) {
+    if (yy[i] > yy[i - 1] && yy[i] > yy[i + 1] && yy[i] > threshold) peaks.push(i);
+  }
+  return peaks;
 }
 
+/* ── Status helper ─────────────────────────────────────────── */
+function setStatus(msg, cls = "") {
+  const el = document.getElementById("status");
+  el.textContent = msg;
+  el.className = cls;
 }
 
+/* ── Main plot function ────────────────────────────────────── */
+function plotSpectrum() {
+  if (!spectra.length) { alert("Please upload at least one spectrum file first."); return; }
+
+  const bold      = document.getElementById("boldStyle").checked;
+  const peaks     = document.getElementById("showPeaks").checked;
+  const xmin      = parseFloat(document.getElementById("xmin").value);
+  const xmax      = parseFloat(document.getElementById("xmax").value);
+  const lw        = parseFloat(document.getElementById("linewidth").value);
+  const norm      = document.getElementById("normType").value;
+  const titleText = document.getElementById("title").value;
+  const titleSize = parseInt(document.getElementById("titleSize").value);
+  const labelSize = parseInt(document.getElementById("labelSize").value);
+  const tickSize  = parseInt(document.getElementById("tickSize").value);
+  const legSize   = parseInt(document.getElementById("legendSize").value);
+
+  // FIX: read width/height as direct pixel values (no scale factor)
+  const W = Math.max(300, parseInt(document.getElementById("figWidth").value)  || 1000);
+  const H = Math.max(200, parseInt(document.getElementById("figHeight").value) || 600);
+
+  const font = bold ? "Arial Black, Arial" : "Georgia, serif";
+
+  // FIX: size the wrapper div BEFORE Plotly touches it, then pass same values to layout
+  const wrapper = document.getElementById("plot-wrapper");
+  wrapper.style.width  = W + "px";
+  wrapper.style.height = H + "px";
+
+  // Purge any existing plot cleanly
+  Plotly.purge(wrapper);
+
+  const traces = [];
+
+  spectra.forEach((spec, idx) => {
+    const mask = spec.x.map((v, i) => v >= xmin && v <= xmax ? i : -1).filter(i => i >= 0);
+    const xx = mask.map(i => spec.x[i]);
+    let   yy = mask.map(i => spec.y[i]);
+
+    yy = normalizeData(yy, norm);
+
+    const color = document.getElementById("color" + idx)?.value ?? "#5ee7c8";
+    const label = document.getElementById("label" + idx)?.value ?? `Spectrum ${idx + 1}`;
+
+    traces.push({
+      x: xx, y: yy,
+      mode: "lines",
+      line: { width: lw, color },
+      name: label
+    });
+
+    if (peaks && yy.length > 2) {
+      const pi = detectPeaks(xx, yy);
+      if (pi.length) {
+        traces.push({
+          x: pi.map(i => xx[i]),
+          y: pi.map(i => yy[i]),
+          mode: "markers+text",
+          marker: { color, size: 5, symbol: "circle" },
+          text: pi.map(i => String(Math.round(xx[i]))),
+          textposition: "top center",
+          textfont: { family: font, size: 9, color: "#333" },
+          showlegend: false,
+          hoverinfo: "skip"
+        });
+      }
+    }
+  });
+
+  // FIX: layout width/height must match wrapper — autosize must be FALSE
+  const layout = {
+    width:  W,
+    height: H,
+    autosize: false,
+    title: { text: titleText, font: { size: titleSize, family: font, color: "#111" } },
+    plot_bgcolor:  "white",
+    paper_bgcolor: "white",
+    margin: { l: 70, r: 30, t: 60, b: 70 },
+    xaxis: {
+      title: { text: "Raman Shift (cm\u207B\u00B9)", font: { size: labelSize, family: font } },
+      tickfont: { size: tickSize, family: font },
+      showline: true, linewidth: 2, mirror: true,
+      showgrid: true, gridcolor: "#e5e7eb",
+      range: [xmin, xmax]
+    },
+    yaxis: {
+      title: { text: "Intensity (a.u.)", font: { size: labelSize, family: font } },
+      tickfont: { size: tickSize, family: font },
+      showline: true, linewidth: 2, mirror: true,
+      showgrid: true, gridcolor: "#e5e7eb"
+    },
+    legend: {
+      x: 0.98, y: 0.98,
+      xanchor: "right", yanchor: "top",
+      bgcolor: "rgba(255,255,255,0.9)",
+      bordercolor: "#aaa", borderwidth: 1,
+      font: { size: legSize, family: font }
+    }
+  };
+
+  // FIX: responsive MUST be false — otherwise Plotly resizes to the container
+  // and ignores layout.width / layout.height entirely
+  Plotly.newPlot(wrapper, traces, layout, {
+    responsive: false,
+    displaylogo: false,
+    modeBarButtonsToRemove: ["lasso2d", "select2d"]
+  });
 }
 
-let color=
-"#"+
-Math.floor(
-Math.random()*16777215
-)
-.toString(16)
-.padStart(6,'0')
-
-spectra.push({
-x:x,
-y:y
-})
-
-document
-.getElementById(
-"spectrumControls"
-).innerHTML+=`
-
-<div class='card'>
-
-<b>${filename}</b>
-
-<br><br>
-
-Label
-
-<input
-id='label${index}'
-value='${filename.replace(".txt","")}'>
-
-
-<br><br>
-
-Color
-
-<input
-type='color'
-id='color${index}'
-value='${color}'>
-
-</div>
-`
-
-document
-.getElementById(
-"status"
-).innerHTML=
-spectra.length+
-" spectra loaded"
-
+/* ── Download ──────────────────────────────────────────────── */
+function downloadPlot() {
+  const W = parseInt(document.getElementById("figWidth").value)  || 1000;
+  const H = parseInt(document.getElementById("figHeight").value) || 600;
+  Plotly.downloadImage("plot-wrapper", {
+    format: "png",
+    filename: "RamanPlot",
+    width: W,
+    height: H,
+    scale: 3
+  });
 }
-
-function normalizeData(
-x,y,type
-){
-
-if(type=="none")
-return y
-
-if(type=="max"){
-
-let max=Math.max(...y)
-return y.map(v=>v/max)
-
-}
-
-if(type=="minmax"){
-
-let min=Math.min(...y)
-let max=Math.max(...y)
-
-return y.map(
-v=>(v-min)/(max-min)
-)
-
-}
-
-if(type=="vector"){
-
-let norm=
-Math.sqrt(
-y.reduce(
-(a,b)=>a+b*b,0
-)
-)
-
-return y.map(
-v=>v/norm
-)
-
-}
-
-if(type=="area"){
-
-let area=0
-
-for(let i=1;i<x.length;i++){
-
-area+=(y[i]+y[i-1])
-*(x[i]-x[i-1])/2
-
-}
-
-return y.map(v=>v/area)
-
-}
-
-return y
-
-}
-
-function plotSpectrum(){
-
-let traces=[]
-
-let bold=
-document
-.getElementById(
-"boldStyle"
-).checked
-
-let font=
-bold?
-"Arial Black":
-"Arial"
-
-spectra.forEach(
-(spec,index)=>{
-
-let xx=[]
-let yy=[]
-
-for(
-let i=0;
-i<spec.x.length;
-i++
-){
-
-let xval=spec.x[i]
-
-if(
-xval>=
-parseFloat(xmin.value)
-&&
-xval<=
-parseFloat(xmax.value)
-){
-
-xx.push(xval)
-yy.push(spec.y[i])
-
-}
-
-}
-
-yy=
-normalizeData(
-xx,
-yy,
-normType.value
-)
-
-traces.push({
-
-x:xx,
-
-y:yy,
-
-mode:'lines',
-
-line:{
-
-width:
-linewidth.value,
-
-color:
-document
-.getElementById(
-"color"+index
-).value
-
-},
-
-name:
-document
-.getElementById(
-"label"+index
-).value
-
-})
-
-if(showPeaks.checked){
-
-let peaks=[]
-
-let threshold=
-0.2*
-Math.max(...yy)
-
-for(
-let i=1;
-i<yy.length-1;
-i++
-){
-
-if(
-yy[i]>yy[i-1]
-&&
-yy[i]>yy[i+1]
-&&
-yy[i]>threshold
-){
-
-peaks.push(i)
-
-}
-
-}
-
-traces.push({
-
-x:
-peaks.map(i=>xx[i]),
-
-y:
-peaks.map(i=>yy[i]),
-
-mode:
-'markers+text',
-
-text:
-peaks.map(
-i=>Math.round(xx[i])
-),
-
-textfont:{
-
-family:font,
-size:8
-
-},
-
-showlegend:false
-
-})
-
-}
-
-})
-
-Plotly.newPlot(
-
-'plot',
-
-traces,
-
-{
-
-title:{
-text:title.value,
-font:{
-size:titleSize.value,
-family:font
-}
-},
-
-plot_bgcolor:'white',
-paper_bgcolor:'white',
-
-xaxis:{
-
-title:{
-text:'Raman Shift (cm⁻¹)',
-font:{
-size:labelSize.value,
-family:font
-}
-},
-
-tickfont:{
-size:tickSize.value,
-family:font
-},
-
-showline:true,
-linewidth:3,
-mirror:true,
-showgrid:true
-},
-
-yaxis:{
-
-title:{
-text:'Intensity (a.u.)',
-font:{
-size:labelSize.value,
-family:font
-}
-},
-
-tickfont:{
-size:tickSize.value,
-family:font
-},
-
-showline:true,
-linewidth:3,
-mirror:true,
-showgrid:true
-},
-
-legend:{
-
-x:0.98,
-y:0.98,
-
-xanchor:'right',
-yanchor:'top',
-
-bgcolor:
-'rgba(255,255,255,.85)',
-
-bordercolor:'black',
-borderwidth:1,
-
-font:{
-size:legendSize.value,
-family:font
-}
-
-}
-
-},
-
-{
-
-width:
-figWidth.value*100,
-
-height:
-figHeight.value*100,
-
-responsive:true,
-
-displaylogo:false,
-
-modeBarButtonsToRemove:[
-'lasso2d',
-'select2d'
-]
-
-}
-
-)
-
-}
-
-function downloadPlot(){
-
-Plotly.downloadImage(
-'plot',
-{
-format:'png',
-filename:'RamanPlot',
-width:1200,
-height:700,
-scale:3
-}
-)
-
-}
-
 </script>
-
 </body>
 </html>
