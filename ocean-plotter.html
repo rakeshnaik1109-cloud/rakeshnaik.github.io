@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ocean Optics Raman Plotter</title>
+
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#edf2f7,#dbeafe);
+padding:30px;
+}
+
+.container{
+max-width:1600px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.15);
+}
+
+h1{
+text-align:center;
+font-size:36px;
+font-weight:bold;
+margin-bottom:30px;
+}
+
+.controls{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:18px;
+}
+
+.control-box{
+display:flex;
+flex-direction:column;
+}
+
+label{
+font-weight:bold;
+margin-bottom:8px;
+}
+
+input,select{
+padding:10px;
+border:1px solid #ccc;
+border-radius:10px;
+}
+
+button{
+padding:14px 30px;
+background:#0f172a;
+color:white;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+margin-top:20px;
+margin-right:10px;
+}
+
+button:hover{
+opacity:.9;
+}
+
+#plot{
+margin-top:25px;
+height:750px;
+}
+
+.card{
+padding:15px;
+border:1px solid #ddd;
+border-radius:10px;
+margin-top:15px;
+background:#f8fafc;
+}
+
+#spectrumControls{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(320px,1fr));
+gap:15px;
+margin-top:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Ocean Optics Raman Plotter</h1>
+
+<div class="controls">
+
+<div class="control-box">
+<label>Upload Files</label>
+<input type="file" id="fileInput" multiple accept=".txt">
+</div>
+
+<div class="control-box">
+<label>Plot Title</label>
+<input type="text" id="title" value="Average Spectrum">
+</div>
+
+<div class="control-box">
+<label>X Min</label>
+<input type="number" id="xmin" value="400">
+</div>
+
+<div class="control-box">
+<label>X Max</label>
+<input type="number" id="xmax" value="1800">
+</div>
+
+<div class="control-box">
+<label>Line Width</label>
+<input type="number" id="linewidth" value="2">
+</div>
+
+<div class="control-box">
+<label>Figure Width</label>
+<input type="number" id="figWidth" value="10">
+</div>
+
+<div class="control-box">
+<label>Figure Height</label>
+<input type="number" id="figHeight" value="6">
+</div>
+
+<div class="control-box">
+<label>Normalization</label>
+
+<select id="normType">
+<option value="none">None</option>
+<option value="max">Max</option>
+<option value="minmax">Min-Max</option>
+<option value="area">Area</option>
+<option value="vector">Vector</option>
+</select>
+</div>
+
+<div class="control-box">
+<label>Axis Label Size</label>
+<input type="number" id="labelSize" value="18">
+</div>
+
+<div class="control-box">
+<label>Title Size</label>
+<input type="number" id="titleSize" value="22">
+</div>
+
+<div class="control-box">
+<label>Legend Size</label>
+<input type="number" id="legendSize" value="12">
+</div>
+
+<div class="control-box">
+<label>Tick Size</label>
+<input type="number" id="tickSize" value="13">
+</div>
+
+</div>
+
+<br>
+
+<input type="checkbox" id="showPeaks" checked>
+Detect Peaks
+
+&nbsp;&nbsp;&nbsp;
+
+<input type="checkbox" id="boldStyle" checked>
+Bold Everything
+
+
+<div id="status">
+No file loaded
+</div>
+
+<div id="spectrumControls"></div>
+
+<button onclick="plotSpectrum()">Plot</button>
+<button onclick="downloadPlot()">Download PNG</button>
+
+<div id="plot"></div>
+
+</div>
+
+<script>
+
+let spectra=[]
+
+document
+.getElementById("fileInput")
+.addEventListener(
+"change",
+readFiles
+)
+
+function readFiles(e){
+
+spectra=[]
+
+document
+.getElementById(
+"spectrumControls"
+).innerHTML=""
+
+Array
+.from(e.target.files)
+.forEach((file,index)=>{
+
+let reader=
+new FileReader()
+
+reader.onload=
+evt=>parseOceanData(
+evt.target.result,
+file.name,
+index
+)
+
+reader.readAsText(file)
+
+})
+
+}
+
+function parseOceanData(
+text,
+filename,
+index
+){
+
+let x=[]
+let y=[]
+
+let start=false
+
+let lines=text.split("\n")
+
+for(let line of lines){
+
+if(
+line.includes(
+">>>>>Begin Spectral Data<<<<<"
+)
+){
+
+start=true
+continue
+
+}
+
+if(start){
+
+let vals=
+line.trim()
+.split(/\s+/)
+
+if(vals.length>=2){
+
+let xx=
+parseFloat(vals[0])
+
+let yy=
+parseFloat(vals[1])
+
+if(
+!isNaN(xx)
+&&
+!isNaN(yy)
+){
+
+x.push(xx)
+y.push(yy)
+
+}
+
+}
+
+}
+
+}
+
+let color=
+"#"+
+Math.floor(
+Math.random()*16777215
+)
+.toString(16)
+.padStart(6,'0')
+
+spectra.push({
+x:x,
+y:y
+})
+
+document
+.getElementById(
+"spectrumControls"
+).innerHTML+=`
+
+<div class='card'>
+
+<b>${filename}</b>
+
+<br><br>
+
+Label
+
+<input
+id='label${index}'
+value='${filename.replace(".txt","")}'>
+
+
+<br><br>
+
+Color
+
+<input
+type='color'
+id='color${index}'
+value='${color}'>
+
+</div>
+`
+
+document
+.getElementById(
+"status"
+).innerHTML=
+spectra.length+
+" spectra loaded"
+
+}
+
+function normalizeData(
+x,y,type
+){
+
+if(type=="none")
+return y
+
+if(type=="max"){
+
+let max=Math.max(...y)
+return y.map(v=>v/max)
+
+}
+
+if(type=="minmax"){
+
+let min=Math.min(...y)
+let max=Math.max(...y)
+
+return y.map(
+v=>(v-min)/(max-min)
+)
+
+}
+
+if(type=="vector"){
+
+let norm=
+Math.sqrt(
+y.reduce(
+(a,b)=>a+b*b,0
+)
+)
+
+return y.map(
+v=>v/norm
+)
+
+}
+
+if(type=="area"){
+
+let area=0
+
+for(let i=1;i<x.length;i++){
+
+area+=(y[i]+y[i-1])
+*(x[i]-x[i-1])/2
+
+}
+
+return y.map(v=>v/area)
+
+}
+
+return y
+
+}
+
+function plotSpectrum(){
+
+let traces=[]
+
+let bold=
+document
+.getElementById(
+"boldStyle"
+).checked
+
+let font=
+bold?
+"Arial Black":
+"Arial"
+
+spectra.forEach(
+(spec,index)=>{
+
+let xx=[]
+let yy=[]
+
+for(
+let i=0;
+i<spec.x.length;
+i++
+){
+
+let xval=spec.x[i]
+
+if(
+xval>=
+parseFloat(xmin.value)
+&&
+xval<=
+parseFloat(xmax.value)
+){
+
+xx.push(xval)
+yy.push(spec.y[i])
+
+}
+
+}
+
+yy=
+normalizeData(
+xx,
+yy,
+normType.value
+)
+
+traces.push({
+
+x:xx,
+
+y:yy,
+
+mode:'lines',
+
+line:{
+
+width:
+linewidth.value,
+
+color:
+document
+.getElementById(
+"color"+index
+).value
+
+},
+
+name:
+document
+.getElementById(
+"label"+index
+).value
+
+})
+
+if(showPeaks.checked){
+
+let peaks=[]
+
+let threshold=
+0.2*
+Math.max(...yy)
+
+for(
+let i=1;
+i<yy.length-1;
+i++
+){
+
+if(
+yy[i]>yy[i-1]
+&&
+yy[i]>yy[i+1]
+&&
+yy[i]>threshold
+){
+
+peaks.push(i)
+
+}
+
+}
+
+traces.push({
+
+x:
+peaks.map(i=>xx[i]),
+
+y:
+peaks.map(i=>yy[i]),
+
+mode:
+'markers+text',
+
+text:
+peaks.map(
+i=>Math.round(xx[i])
+),
+
+textfont:{
+
+family:font,
+size:8
+
+},
+
+showlegend:false
+
+})
+
+}
+
+})
+
+Plotly.newPlot(
+
+'plot',
+
+traces,
+
+{
+
+title:{
+text:title.value,
+font:{
+size:titleSize.value,
+family:font
+}
+},
+
+plot_bgcolor:'white',
+paper_bgcolor:'white',
+
+xaxis:{
+
+title:{
+text:'Raman Shift (cm⁻¹)',
+font:{
+size:labelSize.value,
+family:font
+}
+},
+
+tickfont:{
+size:tickSize.value,
+family:font
+},
+
+showline:true,
+linewidth:3,
+mirror:true,
+showgrid:true
+},
+
+yaxis:{
+
+title:{
+text:'Intensity (a.u.)',
+font:{
+size:labelSize.value,
+family:font
+}
+},
+
+tickfont:{
+size:tickSize.value,
+family:font
+},
+
+showline:true,
+linewidth:3,
+mirror:true,
+showgrid:true
+},
+
+legend:{
+
+x:0.98,
+y:0.98,
+
+xanchor:'right',
+yanchor:'top',
+
+bgcolor:
+'rgba(255,255,255,.85)',
+
+bordercolor:'black',
+borderwidth:1,
+
+font:{
+size:legendSize.value,
+family:font
+}
+
+}
+
+},
+
+{
+
+width:
+figWidth.value*100,
+
+height:
+figHeight.value*100,
+
+responsive:true,
+
+displaylogo:false,
+
+modeBarButtonsToRemove:[
+'lasso2d',
+'select2d'
+]
+
+}
+
+)
+
+}
+
+function downloadPlot(){
+
+Plotly.downloadImage(
+'plot',
+{
+format:'png',
+filename:'RamanPlot',
+width:1200,
+height:700,
+scale:3
+}
+)
+
+}
+
+</script>
+
+</body>
+</html>
