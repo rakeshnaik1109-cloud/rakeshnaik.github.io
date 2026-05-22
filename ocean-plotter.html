@@ -659,6 +659,22 @@ table.peak-table td input:focus { border-color: var(--accent); background: #fffb
           <input type="number" id="xyFigHeight" value="600" min="200" step="50">
         </div>
         <div class="field">
+          <label>Title Size</label>
+          <input type="number" id="xyTitleSize" value="22" min="8">
+        </div>
+        <div class="field">
+          <label>Axis Label Size</label>
+          <input type="number" id="xyLabelSize" value="18" min="8">
+        </div>
+        <div class="field">
+          <label>Tick Size</label>
+          <input type="number" id="xyTickSize" value="13" min="6">
+        </div>
+        <div class="field">
+          <label>Legend Size</label>
+          <input type="number" id="xyLegendSize" value="12" min="6">
+        </div>
+        <div class="field">
           <label>Matching Variance Limit</label>
           <input type="number" id="xyTolerance" value="5" min="1">
         </div>
@@ -784,11 +800,13 @@ table.peak-table td input:focus { border-color: var(--accent); background: #fffb
 ═══════════════════════════════════════════════════════════ */
 let spectra = [];     
 let xyDatasets = [];    
-let xyFiles = [];     
+let xyFiles = [];      
 let currentMode = 'ocean';
 let extraDatasetCount = 0;
 let lastPeaksData = []; 
 let lastXYPeaks = []; 
+let xyGlobalIdx = 0; 
+let xyFileNames = {};
 
 let analyzedCommonPeaks = [];
 let analyzedDistinctPeaks = [];
@@ -984,7 +1002,7 @@ function downloadComparisonReport(format, mode) {
   content += `1. UNIVERSAL COMMON PEAKS (Present across all uploaded data arrays)\n`;
   content += `-----------------------------------------------------------------\n`;
   if(analyzedCommonPeaks.length) {
-    analyzedUniversalPeaks.forEach((p, i) => { content += `[Peak #${i+1}] Coordinate: ${p.x.toFixed(1)}\tAvg Intensity: ${p.y.toFixed(4)}\n`; });
+    analyzedCommonPeaks.forEach((p, i) => { content += `[Peak #${i+1}] Coordinate: ${p.x.toFixed(1)}\tAvg Intensity: ${p.y.toFixed(4)}\n`; });
   } else { content += `No absolute universal common peaks isolated inside tolerance window bounds.\n`; }
 
   content += `\n2. DISTINCT / UNIQUE SPECTRAL PEAKS (Trace-isolated specific anomalies)\n`;
@@ -1210,9 +1228,13 @@ function renderCanvasTracesAndLayout(traces, peakDataMatrix, font, wrapper, mode
   const legX = parseFloat(document.getElementById(isOcean ? "legendX" : "xyLegendX").value);
   const legY = parseFloat(document.getElementById(isOcean ? "legendY" : "xyLegendY").value);
 
+  const titleFontSize = isOcean ? 
+    parseInt(document.getElementById("titleSize").value) : 
+    parseInt(document.getElementById("xyTitleSize").value);
+
   const layout = {
     width: W, height: H, autosize: false,
-    title: { text: document.getElementById(isOcean ? "title" : "xyTitle").value, font:{size:parseInt(document.getElementById(isOcean ? "titleSize" : "xyTitleSize").value), family:font} },
+    title: { text: document.getElementById(isOcean ? "title" : "xyTitle").value, font:{size: titleFontSize, family:font} },
     plot_bgcolor: "white", paper_bgcolor: "white", margin: { l:70, r:30, t:60, b:70 },
     xaxis: { title: { text:document.getElementById(isOcean ? "xlabel" : "xyXlabel").value, font:{size:parseInt(document.getElementById(isOcean ? "labelSize" : "xyLabelSize").value), family:font} }, tickfont: {size:parseInt(document.getElementById(isOcean ? "tickSize" : "xyTickSize").value), family:font}, showline:true, linewidth:2, mirror:true, showgrid:true, gridcolor:"#e5e7eb", range: isOcean ? [parseFloat(document.getElementById("xmin").value), parseFloat(document.getElementById("xmax").value)] : undefined },
     yaxis: { title: { text:document.getElementById(isOcean ? "ylabel" : "xyYlabel").value, font:{size:parseInt(document.getElementById(isOcean ? "labelSize" : "xyLabelSize").value), family:font} }, tickfont: {size:parseInt(document.getElementById(isOcean ? "tickSize" : "xyTickSize").value), family:font}, showline:true, linewidth:2, mirror:true, showgrid:true, gridcolor:"#e5e7eb" },
@@ -1387,7 +1409,7 @@ function plotXY() {
 
 function buildXyPeakTableHTML() {
   const tbody = document.getElementById("xyPeakTableBody"); tbody.innerHTML = "";
-  lastXYPeaks.sort((a,b)=>a.x-b.x).forEach((pk, i) => {
+  lastXYPeaks.sort((a,b)=>a-b.x).forEach((pk, i) => {
     tbody.innerHTML += `
       <tr id="xy-pk-row-${i}">
         <td>${i+1}</td>
@@ -1411,7 +1433,6 @@ function downloadXYPeaksTxt() { syncXyTableToMemory(); let txt = `Peak List\n`; 
 function downloadXYPeaksPdf() { syncXyTableToMemory(); const { jsPDF } = window.jspdf; const doc = new jsPDF(); let y = 30; lastXYPeaks.forEach((r,i)=>{ doc.text(`${i+1}. X: ${r.x.toFixed(2)} | Y: ${r.y.toFixed(4)} | Note: ${r.note}`, 14, y); y+=8; }); doc.save("Peaks.pdf"); }
 function downloadXYPlot() { Plotly.downloadImage("xy-plot-wrapper", { format: document.getElementById("xyDownloadFormat").value, filename:"Plot", width:parseInt(document.getElementById("xyFigWidth").value), height:parseInt(document.getElementById("xyFigHeight").value), scale:2 }); }
 
-let xyGlobalIdx = 0; let xyFileNames = {};
 let XY_HINTS = { general:{ badge:"General XY", xlabel:"X Matrix" }, ftir:{ badge:"FTIR Spectrum", xlabel:"Wavenumber (cm⁻¹)" }, uv:{ badge:"UV-Vis Spectrum", xlabel:"Wavelength (nm)" }, xrd:{ badge:"XRD Pattern", xlabel:"2θ (degrees)" }, fluorescence:{ badge:"Fluorescence", xlabel:"Wavelength (nm)" } };
 </script>
 </body>
