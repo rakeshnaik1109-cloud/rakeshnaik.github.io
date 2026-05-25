@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const setupGallery = () => {
   const modal = document.getElementById("imageModal");
   const modalImg = document.getElementById("zoomedImg");
-  const images = Array.from(document.querySelectorAll(".image-card img, .gallery-item img"));
+  const images = Array.from(document.querySelectorAll(".image-card img, .gallery-item img, #researchImg"));
   let currentIndex = 0;
 
   if (!modal || !modalImg || images.length === 0) return;
